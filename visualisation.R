@@ -49,3 +49,18 @@ for (year in unique_years) {
   print(p2)
   ggsave(filename = paste0("heatmap_algues_", year, ".png"), plot = p2, width = 12, height = 8)
 }
+  
+# Identifier les 3 algues les plus dominantes pour chaque année
+top_3_algues_par_annee <- data_clean %>%
+  group_by(`Passage : Année`, `Résultat : Nom du taxon référent`) %>%
+  summarise(Total = n(), .groups = "drop") %>%
+  arrange(`Passage : Année`, desc(Total)) %>%
+  group_by(`Passage : Année`) %>%
+  slice_head(n = 3) %>%  # Sélectionner les 3 algues les plus dominantes par année
+  ungroup()
+
+# Afficher les résultats
+print(top_3_algues_par_annee)
+
+# Si vous souhaitez sauvegarder les résultats dans un fichier CSV
+write.csv(top_3_algues_par_annee, "top_3_algues_par_annee.csv", row.names = FALSE)
